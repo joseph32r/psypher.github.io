@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flag Challenge Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f4;
+    }
+    .fixed-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: #fff;
+      border-bottom: 2px solid #ccc;
+      padding: 20px;
+      z-index: 999;
+    }
+    .content {
+      margin-top: 120px;
+    }
+    .challenge {
+      display: none;
+      margin-bottom: 30px;
+      padding: 20px;
+      background-color: #fff;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+    }
+    .challenge.active {
+      display: block;
+    }
+    input[type="text"] {
+      padding: 5px;
+      width: 200px;
+    }
+    button {
+      padding: 5px 10px;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="fixed-header">
+    <label for="final-flag">Final it&amp;c Flag:</label>
+    <input type="text" id="final-flag" placeholder="Enter it&amp;c{} flag here" />
+    <br><br>
+    <button onclick="startCTF()">Get Flag</button>
+    <button onclick="checkFinalFlag()">Check Final Flag</button>
+  </div>
+
+  <div class="content">
+    <h1>Flag Finding Challenge</h1>
+    <div id="challenges"></div>
+  </div>
+
+  <script>
+    // Store the flags in a secure way, not exposed directly in the HTML.
+    const flags = {
+      0: 'flag{AlamoBowlChamps}',
+      1: 'flag{inspect_element_master}',
+      2: 'flag{solaris}',
+      3: 'flag{dns_flag}',
+      4: 'flag{statueofliberty}',
+      5: 'flag{onepiece}',
+      final: 'it&c{best_class_ever}'
+
+    };
+
+    function startCTF() {
+      alert("That would be too easy");
+      document.getElementById('challenge-0').classList.add('active');
+    }
+
+    const challenges = [
+      {
+        instruction: "Challenge 1: https://drive.google.com/file/d/1_kpshhve8_A0oSRsHGoplTyYhvxdVkEq/view?usp=drive_link",
+        answerIndex: 0
+      },
+      {
+        instruction: "Challenge 2: The flag is hidden somewhere on this page... use the browser's inspect tool to find it!",
+        answerIndex: 1
+      },
+      {
+        instruction: "Challenge 3: I can't seem to remember the name of Dr Hansen's dog...",
+        answerIndex: 2
+      },
+      {
+        instruction: "Challenge 4: https://drive.google.com/file/d/1jQ7M4l9YCA68-M8tMjx2mVDjFXAI2Nn1/view?usp=sharing",
+        answerIndex: 3
+      },
+      {
+        instruction: "Challenge 5: Easy one, what is located at '40.6892° N, 74.0445° W' (type your answer as flag{answernospaces})",
+        answerIndex: 4
+      },
+      {
+        instruction: "Challenge 6: What anime tv show is represented on Brendan's favorite black sweater (if you dont know, decode this '66 6c 61 67 7b 6f 6e 65 70 69 65 63 65 7d')",
+        answerIndex: 5
+      }
+    ];
+
+    const container = document.getElementById('challenges');
+
+    challenges.forEach((ch, i) => {
+      const div = document.createElement('div');
+      div.className = 'challenge';
+      div.id = 'challenge-' + i;
+
+      const p = document.createElement('p');
+      p.textContent = ch.instruction;
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Enter flag...';
+
+      const btn = document.createElement('button');
+      btn.textContent = 'Submit';
+      btn.onclick = () => {
+        // Retrieve the flag from the internal flags object.
+        const correctFlag = flags[ch.answerIndex];
+        if (input.value.trim() === correctFlag) {
+          div.classList.remove('active');
+          if (i + 1 < challenges.length) {
+            document.getElementById('challenge-' + (i + 1)).classList.add('active');
+          } else {
+            const endMsg = document.createElement('h2');
+            endMsg.textContent = 'Congratulations! You completed all challenges. Enter the final it&c{best_class_ever} flag above to finish.';
+            container.appendChild(endMsg);
+          }
+        } else {
+          alert('Incorrect flag, try again!');
+        }
+      };
+
+      div.appendChild(p);
+      div.appendChild(input);
+      div.appendChild(btn);
+      container.appendChild(div);
+    });
+    // Function to check if the final flag is correct
+    function checkFinalFlag() {
+    const finalFlagInput = document.getElementById('final-flag').value.trim();
+    if (finalFlagInput === flags.final) {
+        alert('Congratulations! You have completed all challenges and entered the correct final flag!');
+    } else {
+        alert('Incorrect final flag. Please try again!');
+    }
+    }
+
+  </script>
+</body>
+</html>
