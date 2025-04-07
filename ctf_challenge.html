@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>SQLi CTF Login</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <style>
+        body {
+            background: #111;
+            color: #eee;
+            font-family: monospace;
+            text-align: center;
+            margin-top: 100px;
+        }
+        input {
+            margin: 10px;
+            padding: 8px;
+            width: 220px;
+        }
+        form {
+            background: #222;
+            padding: 30px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .flag {
+            color: lime;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .query {
+            color: orange;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>CTF Login</h1>
+
+<form onsubmit="return login()">
+    <input type="text" id="username" placeholder="Username" required><br>
+    <input type="password" id="password" placeholder="Password" required><br>
+    <input type="submit" value="Login">
+</form>
+
+<div class="query" id="queryOutput"></div>
+<div class="flag" id="flag"></div>
+
+<script>
+let db;
+
+initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}` })
+.then(SQL => {
+    db = new SQL.Database();
+    db.run(`CREATE TABLE users (username TEXT, password TEXT);`);
+    db.run(`INSERT INTO users (username, password) VALUES ('admin', 'supersecret');`);
+});
+
+function login() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
+    document.getElementById("queryOutput").innerText = "Query: " + query;
+
+    try {
+        const result = db.exec(query);
+        if (result.length > 0) {
+            document.getElementById("flag").innerText = "✅ Flag: CTF{real_sql_injection_success}";
+        } else {
+            document.getElementById("flag").innerText = "❌ Login failed.";
+        }
+    } catch (err) {
+        document.getElementById("flag").innerText = "⚠️ SQL Error: " + err.message;
+    }
+
+    return false; // prevent form submission
+}
+</script>
+
+</body>
+</html>
