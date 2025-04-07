@@ -1,84 +1,133 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>SQLi CTF Login</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
-    <style>
-        body {
-            background: #111;
-            color: #eee;
-            font-family: monospace;
-            text-align: center;
-            margin-top: 100px;
-        }
-        input {
-            margin: 10px;
-            padding: 8px;
-            width: 220px;
-        }
-        form {
-            background: #222;
-            padding: 30px;
-            border-radius: 10px;
-            display: inline-block;
-        }
-        .flag {
-            color: lime;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-        .query {
-            color: orange;
-            font-size: 14px;
-            margin-top: 10px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flag Challenge Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f4;
+    }
+    .fixed-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: #fff;
+      border-bottom: 2px solid #ccc;
+      padding: 20px;
+      z-index: 999;
+    }
+    .content {
+      margin-top: 120px;
+    }
+    .challenge {
+      display: none;
+      margin-bottom: 30px;
+      padding: 20px;
+      background-color: #fff;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+    }
+    .challenge.active {
+      display: block;
+    }
+    input[type="text"] {
+      padding: 5px;
+      width: 200px;
+    }
+    button {
+      padding: 5px 10px;
+      margin-left: 10px;
+    }
+  </style>
 </head>
 <body>
+  <div class="fixed-header">
+    <label for="final-flag">Final it&amp;c Flag:</label>
+    <input type="text" id="final-flag" placeholder="Enter it&amp;c{} flag here" />
+    <br><br>
+    <button onclick="startCTF()">Get Flag</button>
+  </div>
 
-<h1>CTF Login</h1>
+  <div class="content">
+    <h1>Flag Finding Challenge</h1>
+    <div id="challenges"></div>
+  </div>
 
-<form onsubmit="return login()">
-    <input type="text" id="username" placeholder="Username" required><br>
-    <input type="password" id="password" placeholder="Password" required><br>
-    <input type="submit" value="Login">
-</form>
+  <!-- The flag is: flag{inspect_element_master} -->
 
-<div class="query" id="queryOutput"></div>
-<div class="flag" id="flag"></div>
-
-<script>
-let db;
-
-initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}` })
-.then(SQL => {
-    db = new SQL.Database();
-    db.run(`CREATE TABLE users (username TEXT, password TEXT);`);
-    db.run(`INSERT INTO users (username, password) VALUES ('admin', 'supersecret');`);
-});
-
-function login() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
-    document.getElementById("queryOutput").innerText = "Query: " + query;
-
-    try {
-        const result = db.exec(query);
-        if (result.length > 0) {
-            document.getElementById("flag").innerText = "✅ Flag: CTF{real_sql_injection_success}";
-        } else {
-            document.getElementById("flag").innerText = "❌ Login failed.";
-        }
-    } catch (err) {
-        document.getElementById("flag").innerText = "⚠️ SQL Error: " + err.message;
+  <script>
+    function startCTF() {
+      alert("That would be too easy");
+      document.getElementById('challenge-0').classList.add('active');
     }
 
-    return false; // prevent form submission
-}
-</script>
+    const challenges = [
+      {
+        instruction: "https://drive.google.com/file/d/1_kpshhve8_A0oSRsHGoplTyYhvxdVkEq/view?usp=drive_link",
+        answer: "flag{AlamoBowlChamps}"
+      },
+      {
+        instruction: "Challenge 2: The flag is hidden somewhere on this page... use the browser's inspect tool to find it!",
+        answer: "flag{inspect_element_master}"
+      },
+      {
+        instruction: "Challenge 3: Reverse 'three_egnellahc' and wrap with 'flag{}'.",
+        answer: "flag{challenge_three}"
+      },
+      {
+        instruction: "Challenge 4: The flag is the answer to 12 * 12, wrapped in 'flag{}'.",
+        answer: "flag{144}"
+      },
+      {
+        instruction: "Challenge 5: Base64 decode 'ZmxhZ3tjaGFsbGVuZ2VfZml2ZX0='",
+        answer: "flag{challenge_five}"
+      },
+      {
+        instruction: "Challenge 6: The sixth flag is just 'flag{six}'",
+        answer: "flag{six}"
+      }
+    ];
 
+    const container = document.getElementById('challenges');
+
+    challenges.forEach((ch, i) => {
+      const div = document.createElement('div');
+      div.className = 'challenge';
+      div.id = 'challenge-' + i;
+
+      const p = document.createElement('p');
+      p.textContent = ch.instruction;
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Enter flag...';
+
+      const btn = document.createElement('button');
+      btn.textContent = 'Submit';
+      btn.onclick = () => {
+        if (input.value.trim() === ch.answer) {
+          div.classList.remove('active');
+          if (i + 1 < challenges.length) {
+            document.getElementById('challenge-' + (i + 1)).classList.add('active');
+          } else {
+            const endMsg = document.createElement('h2');
+            endMsg.textContent = 'Congratulations! You completed all challenges. Enter the final it&c{} flag above to finish.';
+            container.appendChild(endMsg);
+          }
+        } else {
+          alert('Incorrect flag, try again!');
+        }
+      };
+
+      div.appendChild(p);
+      div.appendChild(input);
+      div.appendChild(btn);
+      container.appendChild(div);
+    });
+  </script>
 </body>
 </html>
