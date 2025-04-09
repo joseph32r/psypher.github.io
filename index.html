@@ -47,7 +47,7 @@
 <body>
   <div class="fixed-header">
     <label for="final-flag">Final it&amp;c Flag:</label>
-    <input type="text" id="final-flag" placeholder="Enter it&amp;c{} flag here" />
+    <input type="text" id="final-flag" placeholder="Enter itc101c{} flag here" />
     <br><br>
     <button onclick="startCTF()">Get Flag</button>
     <button onclick="checkFinalFlag()">Check Final Flag</button>
@@ -67,7 +67,7 @@
       3: 'flag{dns_flag}',
       4: 'flag{statueofliberty}',
       5: 'flag{onepiece}',
-      final: 'it&c{best_class_ever}'
+      final: 'itc101{best_class_ever}'
 
     };
 
@@ -128,7 +128,7 @@
             document.getElementById('challenge-' + (i + 1)).classList.add('active');
           } else {
             const endMsg = document.createElement('h2');
-            endMsg.textContent = 'Congratulations! You completed all challenges. Enter the final it&c{best_class_ever} flag above to finish.';
+            endMsg.textContent = 'Congratulations! You completed all challenges. Enter the final itc101{best_class_ever} flag above to finish.';
             container.appendChild(endMsg);
           }
         } else {
